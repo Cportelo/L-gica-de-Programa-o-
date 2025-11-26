@@ -1,0 +1,96 @@
+import os
+from dataclasses import dataclass
+
+os.system("cls") 
+
+
+
+@dataclass
+class Funcionario:
+    """Classe para representar um Funcionário com seus atributos."""
+    nome: str
+    data_admissao: str  
+    matricula: str
+    endereco: str
+    
+    def to_csv_line(self):
+        """Retorna uma string formatada para salvar em CSV."""
+        return f"{self.nome},{self.data_admissao},{self.matricula},{self.endereco}\n"
+
+@dataclass
+class Cliente:
+    """Classe para representar um Cliente com seus atributos."""
+    nome: str
+    data_nascimento: str 
+    endereco: str
+    
+    def to_csv_line(self):
+        """Retorna uma string formatada para salvar em CSV."""
+        return f"{self.nome},{self.data_nascimento},{self.endereco}\n"
+
+# --- Funções para Coleta de Dados e Salvamento ---
+
+def coletar_dados_funcionarios(quantidade: int) -> list[Funcionario]:
+    """Coleta os dados de 'quantidade' funcionários e retorna a lista."""
+    funcionarios = []
+    print("\n--- Coleta de Dados de Funcionários ---")
+    for i in range(quantidade):
+        print(f"\nFuncionário {i + 1}:")
+        f = Funcionario(
+            nome=input("Nome: "),
+            data_admissao=input("Data de Admissão (ex: 01/01/2023): "),
+            matricula=input("Matrícula: "),
+            endereco=input("Endereço: ")
+        )
+        funcionarios.append(f)
+    return funcionarios
+
+def coletar_dados_clientes(quantidade: int) -> list[Cliente]:
+    """Coleta os dados de 'quantidade' clientes e retorna a lista."""
+    clientes = []
+    print("\n--- Coleta de Dados de Clientes ---")
+    for i in range(quantidade):
+        print(f"\nCliente {i + 1}:")
+        c = Cliente(
+            nome=input("Nome: "),
+            data_nascimento=input("Data de Nascimento (ex: 15/05/1990): "),
+            endereco=input("Endereço: ")
+        )
+        clientes.append(c)
+    return clientes
+
+def salvar_dados_em_arquivo(nome_arquivo: str, lista_objetos: list):
+    """Salva a lista de objetos no arquivo especificado, usando 'to_csv_line' de cada objeto."""
+    try:
+        # Modo "w" para sobrescrever ou criar o arquivo
+        with open(nome_arquivo, "w", encoding="utf-8") as arquivo:
+            for obj in lista_objetos:
+                arquivo.write(obj.to_csv_line())
+        print(f"\n✅ Dados salvos com sucesso no arquivo '{nome_arquivo}'.")
+    except IOError as e:
+        print(f"\n❌ Erro ao salvar o arquivo '{nome_arquivo}': {e}")
+        
+def exibir_dados_de_arquivo(nome_arquivo: str):
+    """Lê e exibe o conteúdo de um arquivo."""
+    print(f"\n--- Conteúdo do Arquivo '{nome_arquivo}' ---")
+    try:
+        with open(nome_arquivo, "r", encoding="utf-8") as arquivo:
+            for linha in arquivo:
+                print(f"- {linha.strip()}")
+    except FileNotFoundError:
+        print(f"O arquivo '{nome_arquivo}' não foi encontrado.")
+
+# --- Execução Principal ---
+QUANTIDADE = 3 # Número de funcionários e clientes a serem coletados
+
+# 1. Coleta de dados (usando funções e estruturas de repetição)
+lista_funcionarios = coletar_dados_funcionarios(QUANTIDADE)
+lista_clientes = coletar_dados_clientes(QUANTIDADE)
+
+# 2. Salvamento dos dados (usando funções e manipulação de arquivos)
+salvar_dados_em_arquivo("funcionarios.csv", lista_funcionarios)
+salvar_dados_em_arquivo("clientes.csv", lista_clientes)
+
+# 3. Exibição dos dados lidos dos arquivos (opcional, para validação)
+exibir_dados_de_arquivo("funcionarios.csv")
+exibir_dados_de_arquivo("clientes.csv")
